@@ -14,7 +14,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/xo/dburl"
 
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 const (
