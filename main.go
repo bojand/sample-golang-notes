@@ -12,7 +12,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
-	"github.com/xo/dburl"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
