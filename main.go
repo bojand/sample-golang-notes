@@ -56,14 +56,8 @@ func main() {
 	if databaseURL == "" {
 		databaseURL = defaultDatabaseURL
 	}
-	dbURL, err := dburl.Parse(databaseURL)
-	requireNoError(err, "parsing DATABASE_URL")
-
-	// Open a DB connection.
-	dbPassword, _ := dbURL.User.Password()
-	dbName := strings.Trim(dbURL.Path, "/")
-	connectionString := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s", dbURL.Hostname(), dbURL.Port(), dbURL.User.Username(), dbName, dbPassword, dbURL.Query().Get("sslmode"))
-	db, err := gorm.Open("mysql", connectionString)
+	
+	db, err := gorm.Open("mysql", databaseURL)
 	requireNoError(err, "connecting to database")
 	defer db.Close()
 	initialMigration(db)
