@@ -13,7 +13,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 
-	mysql "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 const (
@@ -56,7 +56,8 @@ func main() {
 		databaseURL = defaultDatabaseURL
 	}
 	
-	db, err := gorm.Open(mysql.Open(databaseURL), &gorm.Config{})
+	fmt.Println("databaseURL:", databaseURL)
+	db, err := gorm.Open("mysql", databaseURL)
 	requireNoError(err, "connecting to database")
 	defer db.Close()
 	initialMigration(db)
