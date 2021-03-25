@@ -10,10 +10,10 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
+	"gorm.io/gorm"
 
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"gorm.io/driver/mysql"
 )
 
 const (
@@ -55,11 +55,17 @@ func main() {
 	if databaseURL == "" {
 		databaseURL = defaultDatabaseURL
 	}
-	
+
 	fmt.Println("databaseURL:", databaseURL)
-	db, err := gorm.Open("mysql", databaseURL)
+	db, err := gorm.Open(mysql.Open(databaseURL), &gorm.Config{})
 	requireNoError(err, "connecting to database")
-	defer db.Close()
+
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer sqlDB.Close()
+
 	initialMigration(db)
 
 	// Initialize the listening port.
@@ -143,7 +149,7 @@ func noteHandler(db *gorm.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		var note Note
 		err := db.Where("uuid = ?", noteID).Take(&note).Error
-		if gorm.IsRecordNotFoundError(err) {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
